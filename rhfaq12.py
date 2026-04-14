@@ -3,15 +3,15 @@ import cv2
 import numpy as np
 import os
 
-# --- [0] 한글 경로 이미지 읽기 함수 ---
-def imread_korean(path):
+# --- [0] 이미지 읽기 함수 (웹 환경 최적화) ---
+def imread_web(path):
     try:
+        # 웹 환경에서는 한글 경로 처리가 필요 없으므로 일반적인 imread를 사용하되
+        # 파일이 있는지 확인하는 절차를 거칩니다.
         if not os.path.exists(path):
             return None
-        with open(path, "rb") as f:
-            bytes = bytearray(f.read())
-            numpy_array = np.asarray(bytes, dtype=np.uint8)
-            return cv2.imdecode(numpy_array, cv2.IMREAD_COLOR)
+        img = cv2.imread(path)
+        return img
     except Exception:
         return None
 
@@ -19,20 +19,20 @@ def imread_korean(path):
 st.set_page_config(page_title="OpenCV 과제 최종", layout="wide")
 st.title("🖼️ OpenCV 이미지 처리 (500x500 고정 모드)")
 
-# --- [1] 이미지 경로 설정 ---
-path1 = r"C:\Users\신민욱\computervision\lizard.jpg"
-path2 = r"C:\Users\신민욱\computervision\bieber.jpg"
-path_obj = r"C:\Users\신민욱\computervision\object.jpg"
-path_back = r"C:\Users\신민욱\computervision\background.png"
+# --- [1] 이미지 경로 설정 (중요: C:\ 주소를 모두 지웠습니다!) ---
+# GitHub 저장소에 같이 올린 파일 이름만 적어주면 됩니다.
+path1 = "lizard.jpg"
+path2 = "bieber.jpg"
+path_obj = "object.jpg"
+path_back = "background.png"
 
 # 이미지 로드
-raw_img1 = imread_korean(path1)
-raw_img2 = imread_korean(path2)
-raw_obj = imread_korean(path_obj)
-raw_back = imread_korean(path_back)
+raw_img1 = imread_web(path1)
+raw_img2 = imread_web(path2)
+raw_obj = imread_web(path_obj)
+raw_back = imread_web(path_back)
 
-# --- [2] 모든 이미지 크기를 500x500으로 대폭 확대 ---
-# 교수님께 보여드릴 때 화면에 꽉 차게 보일 거예요.
+# --- [2] 모든 이미지 크기를 500x500으로 조절 ---
 def resize_500(img):
     if img is not None:
         return cv2.resize(img, (500, 500))
@@ -49,12 +49,13 @@ menu = st.sidebar.selectbox(
     ["메인 화면", "이미지 더하기", "이미지 블렌딩", "차영상 (Subtract)", "차이 영상 (Absdiff)", "회전 (Rotation)", "사이즈 변경", "이동 (Translation)"]
 )
 
+# 이미지 파일이 하나라도 없을 경우 안내 메시지 출력
 if img1 is None:
-    st.error(f"❌ 파일을 찾을 수 없습니다: {path1}")
-    st.info("파일 경로를 다시 확인해주세요!")
+    st.error(f"❌ '{path1}' 파일을 찾을 수 없습니다.")
+    st.info("GitHub 저장소에 lizard.jpg 파일이 업로드되어 있는지 확인해주세요!")
     st.stop()
 
-# 고정된 크기 정보 (500으로 변경)
+# 고정된 크기 정보
 h, w = 500, 500
 
 # --- [4] 기능 구현 ---
@@ -64,6 +65,8 @@ if menu == "메인 화면":
     col1.image(img1, channels="BGR", caption="Lizard (500x500)", use_container_width=True)
     if img2 is not None:
         col2.image(img2, channels="BGR", caption="Bieber (500x500)", use_container_width=True)
+    else:
+        st.warning("bieber.jpg 파일이 업로드되지 않았습니다.")
 
 elif menu == "이미지 더하기":
     st.subheader("이미지 더하기")

@@ -3,7 +3,14 @@ import cv2
 import numpy as np
 import os
 
-# --- [0] 이미지 읽기 함수 ---
+# --- [0] 웹 페이지 설정 (반드시 모든 st 함수 중 가장 위에 있어야 함) ---
+st.set_page_config(
+    page_title="OpenCV 과제 최종", 
+    layout="wide", 
+    page_icon="📷🦎🦫"
+)
+
+# --- [1] 이미지 읽기 함수 ---
 def imread_web(path):
     try:
         if not os.path.exists(path):
@@ -13,11 +20,9 @@ def imread_web(path):
     except Exception:
         return None
 
-# 웹 페이지 설정
-st.set_page_config(page_title="OpenCV 과제 최종", layout="wide")
 st.title("🖼️ OpenCV 이미지 처리")
 
-# --- [1] 이미지 경로 설정 ---
+# --- [2] 이미지 경로 설정 ---
 path1 = "lizard.jpg"
 path2 = "bieber.jpg"
 path_obj = "object.jpg"
@@ -29,7 +34,7 @@ raw_img2 = imread_web(path2)
 raw_obj = imread_web(path_obj)
 raw_back = imread_web(path_back)
 
-# --- [2] 모든 이미지 크기를 500x500으로 조절 ---
+# --- [3] 모든 이미지 크기를 500x500으로 조절 ---
 def resize_500(img):
     if img is not None:
         return cv2.resize(img, (500, 500))
@@ -40,23 +45,23 @@ img2 = resize_500(raw_img2)
 img_obj = resize_500(raw_obj)
 img_back = resize_500(raw_back)
 
-# --- [3] 사이드바 메뉴 ---
+# --- [4] 사이드바 메뉴 ---
 menu = st.sidebar.selectbox(
     "기능 선택",
     ["메인 화면", "이미지 더하기", "이미지 블렌딩", "차영상 (Subtract)", "차이 영상 (Absdiff)", "회전 (Rotation)", "사이즈 변경", "이동 (Translation)"]
 )
 
+# 기본 이미지가 없을 경우 가이드
 if img1 is None:
-    st.error(f"❌ '{path1}' 파일을 찾을 수 없습니다.")
+    st.error(f"❌ '{path1}' 파일을 찾을 수 없습니다. GitHub에 사진 파일을 모두 업로드했는지 확인해주세요!")
     st.stop()
 
 h, w = 500, 500
 
-# --- [4] 기능 구현 (자막 제거 버전) ---
+# --- [5] 기능 구현 (자막 제거 버전) ---
 if menu == "메인 화면":
     st.subheader("원본 이미지 확인")
     col1, col2 = st.columns(2)
-    # caption 인자를 삭제하여 글자가 나오지 않게 설정했습니다.
     col1.image(img1, channels="BGR", use_container_width=True)
     if img2 is not None:
         col2.image(img2, channels="BGR", use_container_width=True)
@@ -75,7 +80,7 @@ elif menu == "이미지 블렌딩":
     if img2 is not None:
         alpha = st.slider("Alpha (투명도 조절)", 0.0, 1.0, 0.5)
         res_blend = cv2.addWeighted(img1, alpha, img2, 1-alpha, 0)
-        st.image(res_blend, channels="BGR")
+        st.image(res_blend, channels="BGR", width=600)
 
 elif menu == "차영상 (Subtract)":
     st.subheader("차영상 (Subtract)")
@@ -100,7 +105,7 @@ elif menu == "회전 (Rotation)":
     angle = st.slider("각도", -180, 180, 0)
     M = cv2.getRotationMatrix2D((w/2, h/2), angle, 1)
     res = cv2.warpAffine(img1, M, (w, h))
-    st.image(res, channels="BGR")
+    st.image(res, channels="BGR", width=600)
 
 elif menu == "사이즈 변경":
     st.subheader("사이즈 변경")
@@ -114,4 +119,4 @@ elif menu == "이동 (Translation)":
     ty = st.slider("Y축 이동", -250, 250, 0)
     M = np.float32([[1, 0, tx], [0, 1, ty]])
     res = cv2.warpAffine(img1, M, (w, h))
-    st.image(res, channels="BGR")
+    st.image(res, channels="BGR", width=600)

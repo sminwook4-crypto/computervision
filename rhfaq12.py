@@ -5,9 +5,8 @@ import os
 
 # --- [0] 웹 페이지 설정 (반드시 모든 st 함수 중 가장 위에 있어야 함) ---
 st.set_page_config(
-    page_title="OpenCV 과제 최종", 
-    layout="wide", 
-    page_icon="📷🦎🦫"
+    page_title="OpenCV 과제 최종",
+    layout="wide"
 )
 
 # --- [1] 이미지 읽기 함수 ---
@@ -20,7 +19,7 @@ def imread_web(path):
     except Exception:
         return None
 
-st.title("🖼️ OpenCV 이미지 처리")
+st.title(" OpenCV 이미지 처리 과제 ")
 
 # --- [2] 이미지 경로 설정 ---
 path1 = "lizard.jpg"
@@ -48,7 +47,7 @@ img_back = resize_500(raw_back)
 # --- [4] 사이드바 메뉴 ---
 menu = st.sidebar.selectbox(
     "기능 선택",
-    ["메인 화면", "이미지 더하기", "이미지 블렌딩", "차영상 (Subtract)", "차이 영상 (Absdiff)", "회전 (Rotation)", "사이즈 변경", "이동 (Translation)"]
+    ["메인 화면", "이미지 더하기", "이미지 블렌딩", "차영상 ", "차이 영상 ", "회전 ", "사이즈 변경", "이동 "]
 )
 
 # 기본 이미지가 없을 경우 가이드
@@ -82,8 +81,8 @@ elif menu == "이미지 블렌딩":
         res_blend = cv2.addWeighted(img1, alpha, img2, 1-alpha, 0)
         st.image(res_blend, channels="BGR", width=600)
 
-elif menu == "차영상 (Subtract)":
-    st.subheader("차영상 (Subtract)")
+elif menu == "차영상 ":
+    st.subheader("차영상 ")
     if img_obj is not None and img_back is not None:
         res_sub = cv2.subtract(img_obj, img_back)
         c1, c2, c3 = st.columns(3)
@@ -91,8 +90,8 @@ elif menu == "차영상 (Subtract)":
         c2.image(img_back, channels="BGR", use_container_width=True)
         c3.image(res_sub, channels="BGR", use_container_width=True)
 
-elif menu == "차이 영상 (Absdiff)":
-    st.subheader("차이 영상 (Absdiff)")
+elif menu == "차이 영상 ":
+    st.subheader("차이 영상 ")
     if img_obj is not None and img_back is not None:
         res_diff = cv2.absdiff(img_obj, img_back)
         c1, c2, c3 = st.columns(3)
@@ -102,7 +101,7 @@ elif menu == "차이 영상 (Absdiff)":
 
 elif menu == "회전 (Rotation)":
     st.subheader("이미지 회전")
-    angle = st.slider("각도", -180, 180, 0)
+    angle = st.slider("이미지 회전", -180, 180, 0)
     M = cv2.getRotationMatrix2D((w/2, h/2), angle, 1)
     res = cv2.warpAffine(img1, M, (w, h))
     st.image(res, channels="BGR", width=600)
@@ -113,7 +112,7 @@ elif menu == "사이즈 변경":
     res = cv2.resize(img1, None, fx=scale, fy=scale)
     st.image(res, channels="BGR")
 
-elif menu == "이동 (Translation)":
+elif menu == "이동 ":
     st.subheader("이미지 이동")
     tx = st.slider("X축 이동", -250, 250, 0)
     ty = st.slider("Y축 이동", -250, 250, 0)

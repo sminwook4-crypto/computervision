@@ -99,7 +99,7 @@ elif menu == "차이 영상 ":
         c2.image(img_back, channels="BGR", use_container_width=True)
         c3.image(res_diff, channels="BGR", use_container_width=True)
 
-elif menu == "회전 (Rotation)":
+elif menu == "회전 ":
     st.subheader("이미지 회전")
     angle = st.slider("이미지 회전", -180, 180, 0)
     M = cv2.getRotationMatrix2D((w/2, h/2), angle, 1)
